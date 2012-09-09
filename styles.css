@@ -1,0 +1,56 @@
+.ddmatch li.matchdrag {
+    border: 1px solid black;
+    background-color: white;
+    cursor: move;
+    margin: 6px;
+    padding: 4px;
+}
+
+.ddmatch ul.matchorigin {
+    width: 35%;
+    border: 1px solid gray;
+    list-style: none;
+    margin: 6px;
+    padding: 4px;
+    float: right;
+}
+
+.ddmatch .matchorigin li {
+    list-style:none;
+}
+
+.ddmatch ul.matchtarget {
+    border: 1px solid black;
+    list-style: none;
+    min-height: 30px;
+    margin: 6px;
+    padding: 4px;
+}
+
+.ddmatch .matchtarget li {
+    list-style:none;
+}
+
+.ddmatch ul.matchdefault {
+    border: 2px solid gray;
+}
+
+.ddmatch ul.matchover {
+    border: 2px dotted red;
+}
+
+.ddmatch td.control {
+    width: 50%;
+    margin: 6px;
+    padding: 4px;
+}
+
+.ddmatch table.answer {
+    float: left;
+    width: 60%;
+    margin-bottom: 0.5em;
+}
+
+.ddmatch .correctanswertable {
+    margin: 10px;
+}
