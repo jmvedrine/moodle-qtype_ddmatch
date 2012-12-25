@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * @package    moodlecore
  * @subpackage backup-moodle2
@@ -112,7 +127,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             $this->set_mapping('question_ddmatch_sub', $oldid, $newitemid);
 
         } else {
-            // match questions require mapping of question_match_sub, because
+            // match questions require mapping of question_ddmatch_sub, because
             // they are used by question_states->answer
 
             // Look for matching subquestion (by question, questiontext and answertext)
@@ -123,6 +138,26 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
                     $DB->sql_compare_text('?'),
                     array($newquestionid, $data->questiontext, $data->answertext),
                     'id', IGNORE_MULTIPLE);
+
+            // Not able to find the answer, let's try cleaning the answertext
+            // of all the question answers in DB as slower fallback.
+            // Same fix as match question type in MDL-36683 / MDL-30018.
+            if (!$sub) {
+                $params = array('question' => $newquestionid);
+                $potentialsubs = $DB->get_records('question_ddmatch_sub', array('question' => $newquestionid), '', 'id, questiontext, answertext');
+                foreach ($potentialsubs as $potentialsub) {
+                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
+                    $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->questiontext); // Clean CTRL chars.
+                    $cleanquestion = preg_replace("/\r\n|\r/", "\n", $cleanquestion); // Normalize line ending.
+
+                    $cleananswer = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->answertext); // Clean CTRL chars.
+                    $cleananswer = preg_replace("/\r\n|\r/", "\n", $cleananswer); // Normalize line ending.
+
+                    if ($cleanquestion === $data->questiontext && $cleananswer == $data->answertext) {
+                        $sub = $potentialsub;
+                    }
+                }
+            }
 
             // Found, let's create the mapping
             if ($sub) {
