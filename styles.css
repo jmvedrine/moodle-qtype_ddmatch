@@ -19,7 +19,7 @@
     list-style:none;
 }
 
-.ddmatch ul.matchtarget {
+.ddmatch .matchtarget {
     border: 1px solid black;
     list-style: none;
     min-height: 30px;
@@ -53,4 +53,18 @@
 
 .ddmatch .correctanswertable {
     margin: 10px;
+}
+
+.yui3-dd-drop-active-valid {
+    border: 2px dotted red;
+}
+.ddmatch ul.yui3-dd-drop-over {
+    border: 2px dotted red;
+}
+.yui3-dd-drop-active-invalid {
+    border: 2px solid red;
+}
+
+.matchtarget .placeholder.hidden {
+    display: none;
 }

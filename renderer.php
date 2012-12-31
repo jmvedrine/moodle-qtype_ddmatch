@@ -19,39 +19,46 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
 
-    public function head_code(question_attempt $qa) {
-        global $PAGE;
+    /**
+     * Generate the HTML required for a ddmatch question
+     *
+     * @param $qa question_attempt The question attempt
+     * @param $options question_display_options The options for display
+     */
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+        // We use the question quite a lot so store a reference to it once.
+        $question = $qa->get_question();
+
+        // Put together the basic question text and answer block.
+        $output  = '';
+        $output .= $this->construct_questiontext($question->format_questiontext($qa));
+        $output .= $this->construct_answerblock($qa, $question, $options);
 
         if ($this->can_use_drag_and_drop()) {
-            $PAGE->requires->js('/question/type/ddmatch/dragdrop.js');
-
-            $PAGE->requires->yui2_lib('yahoo');
-            $PAGE->requires->yui2_lib('event');
-            $PAGE->requires->yui2_lib('dom');
-            $PAGE->requires->yui2_lib('dragdrop');
-            $PAGE->requires->yui2_lib('animation');
-        }
-    }
-
-    public function formulation_and_controls(question_attempt $qa,
-            question_display_options $options) {
-
-        $creator = new formulation_and_controls_select($this, $qa, $options);
-        $o = $creator->construct();
-
-        if ($this->can_use_drag_and_drop()) {
-            $creator = new formulation_and_controls_dragdrop($this, $qa, $options);
-            $creator->construct();
-            
-            $initparams = json_encode($creator->get_ddmatch_init_params());
-            $js = "YAHOO.util.Event.onDOMReady(function(){M.ddmatch.Init($initparams);});";
-
-            $o .= html_writer::script($js);
+            $this->page->requires->string_for_js('draganswerhere', 'qtype_ddmatch');
+            $this->page->requires->yui_module('moodle-qtype_ddmatch-dragdrop',
+                    'M.qtype.ddmatch.init_dragdrop', array(array(
+                        'questionid' => $qa->get_slot(),
+                        'readonly' => $options->readonly,
+                    ))
+            );
         }
 
-        return $o;
+        if ($qa->get_state() === question_state::$invalid) {
+            $output .= html_writer::nonempty_tag('div',
+                    $question->get_validation_error($response),
+                    array('class' => 'validationerror'));
+        }
+
+        return $output;
     }
 
+    /**
+     * Check whether drag and drop is supported
+     *
+     * exist somewhere)
+     * @return boolean Whether or not to generate the drag and drop content
+     */
     protected function can_use_drag_and_drop() {
         global $USER;
 
@@ -68,6 +75,11 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         return true;
     }
 
+    /**
+     * Format the question choices for display
+     *
+     * @param question_attempt qa
+     */
     public function format_choices(question_attempt $qa, $rawhtml=false) {
         $question = $qa->get_question();
         $choices = array();
@@ -87,7 +99,10 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     public function correct_response(question_attempt $qa) {
-        if ($qa->get_state()->is_correct()) return '';
+        if ($qa->get_state()->is_correct()) {
+            // The answer was correct so we don't need to do anything further
+            return '';
+        }
 
         $question = $qa->get_question();
         $stemorder = $question->get_stem_order();
@@ -108,90 +123,74 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
 
         return get_string('correctansweris', 'qtype_match', html_writer::table($table));
     }
-    // needed for formulation_and_controls_* classes
-    public function feedback_class($fraction) {
-        return parent::feedback_class($fraction);
+
+    /**
+     * Construct the question text displayed to the user
+     *
+     * @param questiontext The question text to user
+     * @return String the rendered question text
+     */
+    public function construct_questiontext($questiontext) {
+        return html_writer::tag('div', $questiontext, array(
+                'class' => 'qtext',
+        ));
     }
 
-    public function feedback_image($fraction, $selected = true) {
-        return parent::feedback_image($fraction, $selected);
-    }
-}
+    /**
+     * Construct the answer block area
+     *
+     * @param question_attempt $qa
+     */
+    public function construct_answerblock($qa, $question, $options) {
+        $stemorder = $question->get_stem_order();
+        $response = $qa->get_last_qt_data();
+        $selectchoices = $this->format_choices($qa);
+        $dragdropchoices = $this->format_choices($qa, true);
 
-
-abstract class formulation_and_controls_base {
-    protected $ddmatchrenderer;
-    protected $qa;
-    protected $options;
-    protected $question;
-    protected $choices;
-    protected $curfieldname;
-
-    public function __construct(qtype_ddmatch_renderer $ddmatchrenderer,
-            question_attempt $qa, question_display_options $options) {
-        $this->ddmatchrenderer = $ddmatchrenderer;
-        $this->qa = $qa;
-        $this->options = $options;
-        $this->question = $qa->get_question();
-        $this->init_choices();
-    }
-
-    public function construct() {
-        $response = $this->qa->get_last_qt_data();
-
-        $result = '';
-        $result .= $this->construct_qtext();
-
-        $result .= $this->construct_ablock();
-
-        if ($this->qa->get_state() == question_state::$invalid) {
-            $result .= html_writer::nonempty_tag('div',
-                    $this->question->get_validation_error($response),
-                    array('class' => 'validationerror'));
-        }
-
-        return $result;
-    }
-    
-    protected function construct_qtext() {
-        return html_writer::tag('div', $this->question->format_questiontext($this->qa),
-                array('class' => 'qtext'));
-    }
-    
-    protected function construct_ablock() {
-        $stemorder = $this->question->get_stem_order();
-        $response = $this->qa->get_last_qt_data();
-
-        $o = html_writer::start_tag('div', array('id' => 'ablock_'.$this->question->id, 'class' => 'ablock'));
+        $o  = html_writer::start_tag('div', array('class' => 'ablock'));
         $o .= html_writer::start_tag('table', array('class' => 'answer'));
         $o .= html_writer::start_tag('tbody');
 
         $parity = 0;
+        $curfieldname = null;
         foreach ($stemorder as $key => $stemid) {
             $o .= html_writer::start_tag('tr', array('class' => 'r' . $parity));
-            $o .= html_writer::tag('td', $this->construct_stem_cell($stemid),
+            $o .= html_writer::tag('td', $this->construct_stem_cell($qa, $question, $stemid),
                             array('class' => 'text'));
 
-            $classes = 'control';
+            $classes = array('control');
             $feedbackimage = '';
 
-            $this->curfieldname = $this->question->get_field_name($key);
-            if (array_key_exists($this->curfieldname, $response)) {
-                $selected = $response[$this->curfieldname];
+            $curfieldname = $question->get_field_name($key);
+            if (array_key_exists($curfieldname, $response)) {
+                $selected = $response[$curfieldname];
             } else {
                 $selected = 0;
             }
 
-            $fraction = (int) ($selected && $selected == $this->question->get_right_choice_for($stemid));
+            $fraction = (int) ($selected && $selected == $question->get_right_choice_for($stemid));
 
-            if ($this->options->correctness && $selected) {
-                $classes .= ' ' . $this->ddmatchrenderer->feedback_class($fraction);
-                $feedbackimage = $this->ddmatchrenderer->feedback_image($fraction);
+            if ($options->correctness && $selected) {
+                $classes[]  = $this->feedback_class($fraction);
+                $feedbackimage = $this->feedback_image($fraction);
+            }
+
+            if ($this->can_use_drag_and_drop()) {
+                $dragdropclasses = $classes;
+                $classes[] = 'hiddenifjs';
+                $dragdropclasses[] = 'visibleifjs';
             }
 
             $o .= html_writer::tag('td',
-                    $this->construct_choice_cell($stemid, $selected) .
-                    ' ' . $feedbackimage, array('class' => $classes));
+                    $this->construct_choice_cell_select($qa, $options, $selectchoices, $stemid, $curfieldname, $selected) .
+                    ' ' . $feedbackimage, array('class' => implode(' ', $classes)));
+
+            if ($this->can_use_drag_and_drop()) {
+                // Only add the dragdrop divs if drag drop is enabled
+                $o .= html_writer::tag('td',
+                        $this->construct_choice_cell_dragdrop($qa, $options, $dragdropchoices, $stemid, $curfieldname, $selected) .
+                        ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
+            }
 
             $o .= html_writer::end_tag('tr');
             $parity = 1 - $parity;
@@ -199,122 +198,91 @@ abstract class formulation_and_controls_base {
         $o .= html_writer::end_tag('tbody');
         $o .= html_writer::end_tag('table');
 
-        $o .= $this->construct_additional_controls();
+        if ($this->can_use_drag_and_drop()) {
+            $o .= $this->construct_available_dragdrop_choices($qa, $question);
+        }
 
         $o .= html_writer::end_tag('div');
         $o .= html_writer::tag('div', '', array('class' => 'clearer'));
-        
+
         return $o;
     }
 
-    protected function init_choices() {
-        
+    private function construct_stem_cell($qa, $question, $stemid) {
+        return $question->format_text(
+                            $question->stems[$stemid], $question->stemformat[$stemid],
+                            $qa, 'qtype_ddmatch', 'subquestion', $stemid);
     }
 
-    protected function construct_stem_cell($stemid) {
-        return $this->question->format_text(
-                            $this->question->stems[$stemid], $this->question->stemformat[$stemid],
-                            $this->qa, 'qtype_ddmatch', 'subquestion', $stemid);
+    private function construct_choice_cell_select($qa, $options, $choices, $stemid, $curfieldname, $selected) {
+        return html_writer::select($choices, $qa->get_qt_field_name($curfieldname), $selected,
+                            array('0' => 'choose'), array('disabled' => $options->readonly));
     }
 
-    protected function construct_choice_cell($stemid, $selected) {
-        throw new coding_exception('construct_choice_cell must return at least empty string');
-    }
+    private function construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) {
 
-    protected function construct_additional_controls() {
-        return '';
-    }
-}
+        $placeholderclasses = array('placeholder');
+        $li = '';
 
-class formulation_and_controls_select extends formulation_and_controls_base {
-    protected function init_choices() {
-        $this->choices = $this->ddmatchrenderer->format_choices($this->qa);
-    }
+        // Check whether an answer has already been selected
+        if ($selected !== 0) {
+            // An answer has already been selected, display it as well
+            $question = $qa->get_question();
+            $choiceorder = $question->get_choice_order();
 
-    protected function construct_choice_cell($stemid, $selected) {
-        return html_writer::select($this->choices, $this->qa->get_qt_field_name($this->curfieldname), $selected,
-                            array('0' => 'choose'), array('disabled' => $this->options->readonly));
-    }
-}
-
-class formulation_and_controls_dragdrop extends formulation_and_controls_base {
-    private $lastpostfix = 0;
-    private $selectedids = array();
-    private $ablock;
-    
-    protected function construct_ablock() {
-        $this->ablock = parent::construct_ablock();
-        
-        return $this->ablock;
-    }
-    
-    protected function init_choices() {
-        $this->choices = $this->ddmatchrenderer->format_choices($this->qa, true);
-    }
-
-    protected function construct_choice_cell($stemid, $selected) {
-        if ($selected == 0) {
-            $li = html_writer::tag('li', get_string('draganswerhere', 'qtype_ddmatch'));
-        }
-        else {
-            $choiceorder = $this->question->get_choice_order();
-            $this->lastpostfix++;
-            
-            $id = 'drag'.$this->question->id.'_'.$selected.'_'.$this->lastpostfix;
-            $this->selectedids[] = $id;
             $attributes = array(
-                    'id'    => $id,
-                    'name'  => $id,
-                    'class' => 'matchdrag');
-            $li = html_writer::tag('li', $this->choices[$selected], $attributes);
+                    'data-id' => $selected,
+                    'class' => 'matchdrag copy');
+            $li = html_writer::tag('li', $choices[$selected], $attributes);
+
+            // Add the hidden placeholder class so that the placeholder is initially hidden
+            $placeholderclasses[] = 'hidden';
         }
 
+        $placeholder = html_writer::tag('li', get_string('draganswerhere', 'qtype_ddmatch'), array(
+            'class' => implode(' ', $placeholderclasses),
+        ));
+        $li = $placeholder . $li;
+
+        $question = $qa->get_question();
+
         $attributes = array(
-                'id'    => 'ultarget'.$this->question->id.'_'.$stemid,
-                'name'  => $this->qa->get_qt_field_name($this->curfieldname),
-                'class' => 'matchtarget matchdefault');
-        $o = html_writer::tag('ul', $li, $attributes);
-        
-        $attributes = array(
-                'type'  => 'hidden',
-                'id'    => $this->qa->get_qt_field_name($this->curfieldname),
-                'name'  => $this->qa->get_qt_field_name($this->curfieldname),
-                'value' => $selected);
-        $o .= html_writer::empty_tag('input', $attributes);
-        
-        return $o;
+            'id'    => 'ultarget'.$question->id.'_'.$stemid,
+            'name'  => $qa->get_qt_field_name($curfieldname),
+            'class' => 'matchtarget matchdefault',
+            'data-selectname' => $qa->get_qt_field_name($curfieldname),
+        );
+        $output = html_writer::tag('ul', $li, $attributes);
+
+        return $output;
     }
 
-    protected function construct_additional_controls() {
-        $choiceorder = $this->question->get_choice_order();
+    /**
+     * Construct the list of available answers for use in the drag and drop
+     * interface.
+     *
+     * @param $question
+     * @return String
+     */
+    public function construct_available_dragdrop_choices($qa, $question) {
+        $choiceorder = $question->get_choice_order();
+        $choices = $this->format_choices($qa, true);
+
         $uldata = '';
         foreach ($choiceorder as $key => $choiceid) {
             $attributes = array(
-                    'id'    => 'drag'.$this->question->id.'_'.$key,
-                    'name'  => 'drag'.$this->question->id.'_'.$key,
-                    'class' => 'matchdrag');
-            $li = html_writer::tag('li', $this->choices[$key], $attributes);
+                    'data-id' => $key,
+                    'class' => 'matchdrag'
+            );
+            $li = html_writer::tag('li', $choices[$key], $attributes);
             $uldata .= $li;
         }
         $attributes = array(
-            'id'    => 'ulorigin'.$this->question->id,
-            'class' => 'matchorigin');
+            'id'    => 'ulorigin' . $question->id,
+            'class' => 'matchorigin visibleifjs');
 
         $o = html_writer::tag('ul', $uldata, $attributes);
 
         return $o;
-    }
-    
-    public function get_ddmatch_init_params() {
-        $initparams = new stdClass();
-        $initparams->id = $this->question->id;
-        $initparams->stems = $this->question->get_stem_order();
-        $initparams->choices = $this->question->get_choice_order();
-        $initparams->selectedids = $this->selectedids;
-        $initparams->readonly = $this->options->readonly;
-        $initparams->dragstring = get_string('draganswerhere', 'qtype_ddmatch');
-        $initparams->ablock = $this->ablock;
-
-        return $initparams;
     }
 }
