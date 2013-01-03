@@ -59,15 +59,10 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
      * @return boolean Whether or not to generate the drag and drop content
      */
     protected function can_use_drag_and_drop() {
-        global $USER;
+        global $USER, $CFG;
 
-        $ie = check_browser_version('MSIE', 6.0);
-        $ff = check_browser_version('Gecko', 20051106);
-        $op = check_browser_version('Opera', 9.0);
-        $sa = check_browser_version('Safari', 412);
-        $ch = check_browser_version('Chrome', 6);
-
-        if ((!$ie && !$ff && !$op && !$sa && !$ch) or !empty($USER->screenreader)) {
+        // Note: The screenreader setting no longer exists from Moodle 2.4
+        if (!$CFG->enableajax || !empty($USER->screenreader)) {
             return false;
         }
 
