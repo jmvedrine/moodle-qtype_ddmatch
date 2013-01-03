@@ -45,6 +45,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         if ($qa->get_state() === question_state::$invalid) {
+            $response = $qa->get_last_qt_data();
             $output .= html_writer::nonempty_tag('div',
                     $question->get_validation_error($response),
                     array('class' => 'validationerror'));
@@ -144,6 +145,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     public function construct_answerblock($qa, $question, $options) {
         $stemorder = $question->get_stem_order();
         $response = $qa->get_last_qt_data();
+
         $selectchoices = $this->format_choices($qa);
         $dragdropchoices = $this->format_choices($qa, true);
 
@@ -163,11 +165,10 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
 
             $curfieldname = $question->get_field_name($key);
             if (array_key_exists($curfieldname, $response)) {
-                $selected = $response[$curfieldname];
+                $selected = (int) $response[$curfieldname];
             } else {
                 $selected = 0;
             }
-
             $fraction = (int) ($selected && $selected == $question->get_right_choice_for($stemid));
 
             if ($options->correctness && $selected) {
