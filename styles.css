@@ -35,10 +35,6 @@
     border: 2px solid gray;
 }
 
-.ddmatch ul.matchover {
-    border: 2px dotted red;
-}
-
 .ddmatch td.control {
     width: 50%;
     margin: 6px;
@@ -55,14 +51,12 @@
     margin: 10px;
 }
 
-.yui3-dd-drop-active-valid {
+.ddmatch .matchtarget.yui3-dd-drop-active-valid {
     border: 2px dotted red;
 }
-.ddmatch ul.yui3-dd-drop-over {
-    border: 2px dotted red;
-}
-.yui3-dd-drop-active-invalid {
-    border: 2px solid red;
+
+.ddmatch .matchtarget.yui3-dd-drop-over {
+    border: 2px dotted green;
 }
 
 .matchtarget .placeholder.hidden {

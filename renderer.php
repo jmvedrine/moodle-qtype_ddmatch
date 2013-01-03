@@ -57,19 +57,13 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     /**
      * Check whether drag and drop is supported
      *
-     * exist somewhere)
      * @return boolean Whether or not to generate the drag and drop content
      */
     protected function can_use_drag_and_drop() {
-        global $USER;
+        global $USER, $CFG;
 
-        $ie = check_browser_version('MSIE', 6.0);
-        $ff = check_browser_version('Gecko', 20051106);
-        $op = check_browser_version('Opera', 9.0);
-        $sa = check_browser_version('Safari', 412);
-        $ch = check_browser_version('Chrome', 6);
-
-        if ((!$ie && !$ff && !$op && !$sa && !$ch) or !empty($USER->screenreader)) {
+        // Note: The screenreader setting no longer exists from Moodle 2.4
+        if (!$CFG->enableajax || !empty($USER->screenreader)) {
             return false;
         }
 
@@ -81,7 +75,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt qa
      */
-    public function format_choices(question_attempt $qa, $rawhtml=false) {
+    public function format_choices(question_attempt $qa) {
         $question = $qa->get_question();
         $choices = array();
         foreach ($question->get_choice_order() as $key => $choiceid) {
@@ -89,8 +83,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             $choice = $question->format_text(
                     $choice, $question->choiceformat[$choiceid],
                     $qa, 'qtype_ddmatch', 'subanswer', $choiceid);
-            if ($rawhtml) $choices[$key] = $choice;
-            else $choices[$key] = htmlspecialchars($choice);
+            $choices[$key] = $choice;
         }
         return $choices;
     }
@@ -145,9 +138,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     public function construct_answerblock($qa, $question, $options) {
         $stemorder = $question->get_stem_order();
         $response = $qa->get_last_qt_data();
-
-        $selectchoices = $this->format_choices($qa);
-        $dragdropchoices = $this->format_choices($qa, true);
+        $choices = $this->format_choices($qa);
 
         $o  = html_writer::start_tag('div', array('class' => 'ablock'));
         $o .= html_writer::start_tag('table', array('class' => 'answer'));
@@ -183,13 +174,13 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $o .= html_writer::tag('td',
-                    $this->construct_choice_cell_select($qa, $options, $selectchoices, $stemid, $curfieldname, $selected) .
+                    $this->construct_choice_cell_select($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                     ' ' . $feedbackimage, array('class' => implode(' ', $classes)));
 
             if ($this->can_use_drag_and_drop()) {
                 // Only add the dragdrop divs if drag drop is enabled
                 $o .= html_writer::tag('td',
-                        $this->construct_choice_cell_dragdrop($qa, $options, $dragdropchoices, $stemid, $curfieldname, $selected) .
+                        $this->construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                         ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
             }
 
