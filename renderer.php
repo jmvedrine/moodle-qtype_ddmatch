@@ -56,7 +56,6 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     /**
      * Check whether drag and drop is supported
      *
-     * exist somewhere)
      * @return boolean Whether or not to generate the drag and drop content
      */
     protected function can_use_drag_and_drop() {
