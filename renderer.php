@@ -244,7 +244,8 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             $placeholderclasses[] = 'hidden';
         }
 
-        $placeholder = html_writer::tag('li', get_string('draganswerhere', 'qtype_ddmatch'), array(
+        $placeholder = html_writer::tag('li', html_writer::tag('p',
+            get_string('draganswerhere', 'qtype_ddmatch')), array(
             'class' => implode(' ', $placeholderclasses),
         ));
         $li = $placeholder . $li;

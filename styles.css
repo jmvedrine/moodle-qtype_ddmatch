@@ -1,9 +1,16 @@
+.ddmatch li {
+    margin: 6px;
+    padding: 4px;
+}
+
 .ddmatch li.matchdrag {
     border: 1px solid black;
     background-color: white;
-    cursor: move;
-    margin: 6px;
-    padding: 4px;
+}
+
+.ddmatch li.placeholder {
+    border: 1px dotted black;
+    text-align: center;
 }
 
 .ddmatch ul.matchorigin {
@@ -25,18 +32,27 @@
     min-height: 30px;
     margin: 6px;
     padding: 4px;
+    width: 100%;
 }
 
 .ddmatch .matchtarget li {
     list-style:none;
 }
 
+.ddmatch li p {
+    display: table-cell;
+    vertical-align: middle;
+}
+
 .ddmatch ul.matchdefault {
     border: 2px solid gray;
 }
 
+.ddmatch td.text {
+    width: 25%;
+}
 .ddmatch td.control {
-    width: 50%;
+    width: 75%;
     margin: 6px;
     padding: 4px;
 }
@@ -61,4 +77,8 @@
 
 .matchtarget .placeholder.hidden {
     display: none;
+}
+
+.ddmatch .matchtarget.yui3-dd-drop-over li {
+    background-color: blue;
 }
