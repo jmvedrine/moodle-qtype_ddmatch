@@ -33,12 +33,14 @@ YUI.add('moodle-qtype_ddmatch-dragdrop', function(Y, NAME) {
 
             this.delegation.dd.addToGroup(group);
 
+            this.container.all('li.matchdrag').setStyle('cursor', 'move');
+
             // Add the DDProxy so we only show the outline and can ensure
             // that the element isn't actually moved
             this.delegation.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false
             });
-            
+
             // Constrain the drag action to just this question
             this.delegation.dd.plug(Y.Plugin.DDConstrained, {
                 constrain2node: this.container
