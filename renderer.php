@@ -1,10 +1,23 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Drag&drop matching question renderer class.
  *
- * @package    qtype
- * @subpackage ddmatch
+ * @package    qtype_ddmatch
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -62,7 +75,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     protected function can_use_drag_and_drop() {
         global $USER, $CFG;
 
-        // Note: The screenreader setting no longer exists from Moodle 2.4
+        // Note: The screenreader setting no longer exists from Moodle 2.4.
         if (!$CFG->enableajax || !empty($USER->screenreader)) {
             return false;
         }
@@ -94,14 +107,14 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
 
     public function correct_response(question_attempt $qa) {
         if ($qa->get_state()->is_correct()) {
-            // The answer was correct so we don't need to do anything further
+            // The answer was correct so we don't need to do anything further.
             return '';
         }
 
         $question = $qa->get_question();
         $stemorder = $question->get_stem_order();
         $choices = $this->format_choices($qa, true);
-        
+
         $table = new html_table();
         $table->attributes['class'] = 'generaltable correctanswertable';
         $table->size = array('50%', '50%');
@@ -178,7 +191,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
                     ' ' . $feedbackimage, array('class' => implode(' ', $classes)));
 
             if ($this->can_use_drag_and_drop()) {
-                // Only add the dragdrop divs if drag drop is enabled
+                // Only add the dragdrop divs if drag drop is enabled.
                 $o .= html_writer::tag('td',
                         $this->construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                         ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
@@ -216,9 +229,9 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $placeholderclasses = array('placeholder');
         $li = '';
 
-        // Check whether an answer has already been selected
+        // Check whether an answer has already been selected.
         if ($selected !== 0) {
-            // An answer has already been selected, display it as well
+            // An answer has already been selected, display it as well.
             $question = $qa->get_question();
             $choiceorder = $question->get_choice_order();
 
@@ -227,7 +240,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
                     'class' => 'matchdrag copy');
             $li = html_writer::tag('li', $choices[$selected], $attributes);
 
-            // Add the hidden placeholder class so that the placeholder is initially hidden
+            // Add the hidden placeholder class so that the placeholder is initially hidden.
             $placeholderclasses[] = 'hidden';
         }
 

@@ -1,10 +1,24 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Question type class for the drag&drop matching question type.
  *
- * @package    qtype
- * @subpackage ddmatch
+ * @package    qtype_ddmatch
+ * @copyright  2007 Adriane Boyd (adrianeboyd@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,7 +56,7 @@ class qtype_ddmatch extends question_type {
         // $subquestions will be an array with subquestion ids
         $subquestions = array();
 
-        // Insert all the new question+answer pairs
+        // Insert all the new question+answer pairs.
         foreach ($question->subquestions as $key => $questiontext) {
             if ($questiontext['text'] == '' && trim($question->subanswers[$key]['text']) == '') {
                 continue;
@@ -55,7 +69,7 @@ class qtype_ddmatch extends question_type {
             $subquestion = array_shift($oldsubquestions);
             if (!$subquestion) {
                 $subquestion = new stdClass();
-                // Determine a unique random code
+                // Determine a unique random code.
                 $subquestion->code = rand(1, 999999999);
                 while ($DB->record_exists('question_ddmatch_sub',
                         array('code' => $subquestion->code, 'question' => $question->id))) {
@@ -79,7 +93,7 @@ class qtype_ddmatch extends question_type {
             $subquestions[] = $subquestion->id;
         }
 
-        // Delete old subquestions records
+        // Delete old subquestions records.
         $fs = get_file_storage();
         foreach ($oldsubquestions as $oldsub) {
             $fs->delete_area_files($context->id, 'qtype_ddmatch', 'subquestion', $oldsub->id);
@@ -150,7 +164,7 @@ class qtype_ddmatch extends question_type {
 
     public function delete_question($questionid, $contextid) {
         global $DB;
-        
+
         $DB->delete_records('question_ddmatch', array('question' => $questionid));
         $DB->delete_records('question_ddmatch_sub', array('question' => $questionid));
 
@@ -159,7 +173,7 @@ class qtype_ddmatch extends question_type {
 
     public function get_random_guess_score($questiondata) {
         $q = $this->make_question($questiondata);
-        
+
         return 1 / count($q->choices);
     }
 
@@ -174,7 +188,7 @@ class qtype_ddmatch extends question_type {
             foreach ($q->choices as $choiceid => $choice) {
                 $stemhtml = $q->html_to_text($stem, $q->stemformat[$stemid]);
                 $choicehtml = $q->html_to_text($choice, $q->choiceformat[$choiceid]);
-                
+
                 $responses[$choiceid] = new question_possible_response(
                          $stemhtml. ': ' . $choicehtml,
                         ($choiceid == $q->right[$stemid]) / count($q->stems));
@@ -223,64 +237,62 @@ class qtype_ddmatch extends question_type {
         $fs->delete_area_files($contextid, 'qtype_ddmatch',
                 'incorrectfeedback', $questionid);
     }
-	
-/// IMPORT EXPORT FUNCTIONS ////////////////////////////
- 
+
     /**
-     ** Provide export functionality for xml format
-     ** @param question object the question object
-     ** @param format object the format object so that helper methods can be used 
-     ** @param extra mixed any additional format specific data that may be passed by the format (see format code for info)
-     ** @return string the data to append to the output buffer or false if error
-     **/
+     * Provide export functionality for xml format
+     * @param question object the question object
+     * @param format object the format object so that helper methods can be used
+     * @param extra mixed any additional format specific data that may be passed by the format (see format code for info)
+     * @return string the data to append to the output buffer or false if error
+     */
     public function export_to_xml($question, qformat_xml $format, $extra=null) {
         $expout = '';
         $fs = get_file_storage();
         $contextid = $question->contextid;
-		$expout .= $format->write_combined_feedback($question->options,
+        $expout .= $format->write_combined_feedback($question->options,
                                                     $question->id,
                                                     $question->contextid);
-        foreach($question->options->subquestions as $subquestion) {
+        foreach ($question->options->subquestions as $subquestion) {
             $files = $fs->get_area_files($contextid, 'qtype_ddmatch', 'subquestion', $subquestion->id);
             $textformat = $format->get_format($subquestion->questiontextformat);
             $expout .= "    <subquestion format=\"$textformat\">\n";
             $expout .= '      ' . $format->writetext( $subquestion->questiontext );
             $expout .= '      ' . $format->write_files($files, 2);
             $expout .= "       <answer format=\"$textformat\">\n";
-			$expout .= '      ' . $format->writetext( $subquestion->answertext );
-			$files = $fs->get_area_files($contextid, 'qtype_ddmatch', 'subanswer', $subquestion->id);
-			$expout .= '      ' . $format->write_files($files, 2);
-			$expout .= "       </answer>\n";
+            $expout .= '      ' . $format->writetext( $subquestion->answertext );
+            $files = $fs->get_area_files($contextid, 'qtype_ddmatch', 'subanswer', $subquestion->id);
+            $expout .= '      ' . $format->write_files($files, 2);
+            $expout .= "       </answer>\n";
             $expout .= "    </subquestion>\n";
         }
 
         return $expout;
     }
 
-   /**
-    ** Provide import functionality for xml format
-    ** @param data mixed the segment of data containing the question
-    ** @param question object question object processed (so far) by standard import code
-    ** @param format object the format object so that helper methods can be used (in particular error() )
-    ** @param extra mixed any additional format specific data that may be passed by the format (see format code for info)
-    ** @return object question object suitable for save_options() call or false if cannot handle
-    **/
+    /**
+     * Provide import functionality for xml format
+     * @param data mixed the segment of data containing the question
+     * @param question object question object processed (so far) by standard import code
+     * @param format object the format object so that helper methods can be used (in particular error() )
+     * @param extra mixed any additional format specific data that may be passed by the format (see format code for info)
+     * @return object question object suitable for save_options() call or false if cannot handle
+     */
     public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
-       // check question is for us
-       $qtype = $data['@']['type'];
-       if ($qtype=='ddmatch') {
-           $question = $format->import_headers( $data );
+        // Check question is for us.
+        $qtype = $data['@']['type'];
+        if ($qtype=='ddmatch') {
+            $question = $format->import_headers( $data );
 
-            // header parts particular to matching
+            // Header parts particular to matching.
             $question->qtype = $qtype;
-            $question->shuffleanswers = $format->getpath( $data, array( '#','shuffleanswers',0,'#' ), 1 );
-        
-            // get subquestions
+            $question->shuffleanswers = $format->getpath( $data, array( '#', 'shuffleanswers', 0, '#' ), 1 );
+
+            // Get subquestions.
             $subquestions = $data['#']['subquestion'];
             $question->subquestions = array();
             $question->subanswers = array();
 
-            // run through subquestions
+            // Run through subquestions.
             foreach ($subquestions as $subquestion) {
                 $qo = array();
                 $qo['text'] = $format->getpath($subquestion, array('#', 'text', 0, '#'), '', true);
@@ -297,10 +309,10 @@ class qtype_ddmatch extends question_type {
                     $qo['files'][] = $record;
                 }
                 $question->subquestions[] = $qo;
-				$answers = $format->getpath($subquestion, array('#', 'answer', 0), array());
-				$ans = array();
-				$ans['text'] = $format->getpath($subquestion, array('#','answer',0,'#','text',0,'#'), '', true);
-				$ans['format'] = $format->trans_format(
+                $answers = $format->getpath($subquestion, array('#', 'answer', 0), array());
+                $ans = array();
+                $ans['text'] = $format->getpath($subquestion, array('#', 'answer', 0, '#', 'text', 0, '#'), '', true);
+                $ans['format'] = $format->trans_format(
                         $format->getpath($answers, array('@', 'format'), 'html'));
                 $ans['files'] = array();
                 $files = $format->getpath($answers, array('#', 'file'), array());
@@ -313,12 +325,11 @@ class qtype_ddmatch extends question_type {
                 }
                 $question->subanswers[] = $ans;
             }
-			$format->import_combined_feedback($question, $data, true);
-			$format->import_hints($question, $data, true);
+            $format->import_combined_feedback($question, $data, true);
+            $format->import_hints($question, $data, true);
             return $question;
-       }
-       else {
-           return false;
-       }
-    } 
+        } else {
+            return false;
+        }
+    }
 }

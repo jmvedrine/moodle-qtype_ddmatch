@@ -1,10 +1,24 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Defines the editing form for the drag&drop match question type.
  *
- * @package    qtype
- * @subpackage ddmatch
+ * @package    qtype_ddmatch
+ * @copyright  2007 Adriane Boyd (adrianeboyd@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -73,13 +87,13 @@ class qtype_ddmatch_edit_form extends question_edit_form {
             $draftid = file_get_submitted_draft_itemid('subquestions[' . $key . ']');
             $question->subquestions[$key] = array();
             $question->subquestions[$key]['text'] = file_prepare_draft_area(
-                $draftid,           // draftid
-                $this->context->id, // context
-                'qtype_ddmatch',      // component
-                'subquestion',      // filarea
+                $draftid,           // Draftid.
+                $this->context->id, // Context.
+                'qtype_ddmatch',      // Component.
+                'subquestion',      // Filarea.
                 !empty($subquestion->id) ? (int) $subquestion->id : null, // itemid
-                $this->fileoptions, // options
-                $subquestion->questiontext // text
+                $this->fileoptions, // Options.
+                $subquestion->questiontext // Text.
             );
             $question->subquestions[$key]['format'] = $subquestion->questiontextformat;
             $question->subquestions[$key]['itemid'] = $draftid;
@@ -87,17 +101,17 @@ class qtype_ddmatch_edit_form extends question_edit_form {
             $draftid = file_get_submitted_draft_itemid('subanswers[' . $key . ']');
             $question->subanswers[$key] = array();
             $question->subanswers[$key]['text'] = file_prepare_draft_area(
-                $draftid,           // draftid
-                $this->context->id, // context
-                'qtype_ddmatch',      // component
-                'subanswer',      // filarea
+                $draftid,           // Draftid.
+                $this->context->id, // Context.
+                'qtype_ddmatch',      // Component.
+                'subanswer',      // Filarea.
                 !empty($subquestion->id) ? (int) $subquestion->id : null, // itemid
-                $this->fileoptions, // options
-                $subquestion->answertext // text
+                $this->fileoptions, // Options.
+                $subquestion->answertext // Text.
             );
             $question->subanswers[$key]['format'] = $subquestion->answertextformat;
             $question->subanswers[$key]['itemid'] = $draftid;
-            
+
             $key++;
         }
 

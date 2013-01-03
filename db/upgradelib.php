@@ -17,15 +17,12 @@
 /**
  * Upgrade library code for the match question type.
  *
- * @package    qtype
- * @subpackage match
+ * @package    qtype_ddmatch
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Class for converting attempt data for match questions when upgrading
