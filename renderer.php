@@ -80,7 +80,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt qa
      */
-    public function format_choices(question_attempt $qa, $rawhtml=false) {
+    public function format_choices(question_attempt $qa) {
         $question = $qa->get_question();
         $choices = array();
         foreach ($question->get_choice_order() as $key => $choiceid) {
@@ -88,8 +88,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             $choice = $question->format_text(
                     $choice, $question->choiceformat[$choiceid],
                     $qa, 'qtype_ddmatch', 'subanswer', $choiceid);
-            if ($rawhtml) $choices[$key] = $choice;
-            else $choices[$key] = htmlspecialchars($choice);
+            $choices[$key] = $choice;
         }
         return $choices;
     }
@@ -144,8 +143,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
     public function construct_answerblock($qa, $question, $options) {
         $stemorder = $question->get_stem_order();
         $response = $qa->get_last_qt_data();
-        $selectchoices = $this->format_choices($qa);
-        $dragdropchoices = $this->format_choices($qa, true);
+        $choices = $this->format_choices($qa);
 
         $o  = html_writer::start_tag('div', array('class' => 'ablock'));
         $o .= html_writer::start_tag('table', array('class' => 'answer'));
@@ -182,13 +180,13 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
             }
 
             $o .= html_writer::tag('td',
-                    $this->construct_choice_cell_select($qa, $options, $selectchoices, $stemid, $curfieldname, $selected) .
+                    $this->construct_choice_cell_select($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                     ' ' . $feedbackimage, array('class' => implode(' ', $classes)));
 
             if ($this->can_use_drag_and_drop()) {
                 // Only add the dragdrop divs if drag drop is enabled
                 $o .= html_writer::tag('td',
-                        $this->construct_choice_cell_dragdrop($qa, $options, $dragdropchoices, $stemid, $curfieldname, $selected) .
+                        $this->construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                         ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
             }
 
