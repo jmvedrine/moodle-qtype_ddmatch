@@ -61,7 +61,7 @@ class qtype_ddmatch_question extends qtype_match_question {
 
                 $choiceid = $this->choiceorder[$response[$this->field($key)]];
                 $choicesummarise = $this->html_to_text($this->choices[$choiceid],
-                        $this->stemformat[$choiceid]);
+                        $this->choiceformat[$choiceid]);
                 $matches[] =  $stemssummarise. ' -> ' .$choicesummarise;
             }
         }
@@ -74,10 +74,12 @@ class qtype_ddmatch_question extends qtype_match_question {
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        if ($component == 'qtype_ddmatch' && $filearea == 'subquestion' or
-                $component == 'qtype_ddmatch' && $filearea == 'subanswer') {
+        if ($component == 'qtype_ddmatch' && $filearea == 'subquestion') {
             $subqid = reset($args);
             return array_key_exists($subqid, $this->stems);
+        } else if ($component == 'qtype_ddmatch' && $filearea == 'subanswer') {
+            $subqid = reset($args);
+            return array_key_exists($subqid, $this->choices);        
         } else if ($component == 'question' && in_array($filearea,
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
             return $this->check_combined_feedback_file_access($qa, $options, $filearea);
