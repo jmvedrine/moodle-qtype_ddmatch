@@ -24,7 +24,7 @@
  */
 
 $string['pluginname'] = 'Drag-and-Drop-Zuordnung';
-$string['draganswerhere'] = 'Ziehen Sie mit der Maus die Antwort an die richtige Stelle in diesem Bereich';
+$string['draganswerhere'] = 'Ziehen Sie die richtige Antwort in diesen Bereich';
 $string['editingddmatch'] = 'Drag-and-Drop Zuordnungsfrage bearbeiten';
 $string['pluginname_help'] = 'Bei Drag-and-drop matching question müssen die Benutzer eine Liste von Namen oder Aussagen (Fragen) korrekt mit einer zweiten Liste von Namen oder Aussagen (Antworten) verbinden.';
 $string['pluginname_link'] = 'question/type/ddmatch';
