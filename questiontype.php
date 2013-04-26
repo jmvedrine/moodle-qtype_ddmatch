@@ -271,63 +271,37 @@ class qtype_ddmatch extends question_type {
 
     /**
      * Provide import functionality for xml format
-     * @param data mixed the segment of data containing the question
-     * @param question object question object processed (so far) by standard import code
-     * @param format object the format object so that helper methods can be used (in particular error() )
-     * @param extra mixed any additional format specific data that may be passed by the format (see format code for info)
+     * @param $xml mixed the segment of data containing the question
+     * @param $fromform object question object processed (so far) by standard import code
+     * @param $format object the format object so that helper methods can be used (in particular error() )
+     * @param $extra mixed any additional format specific data that may be passed by the format (see format code for info)
      * @return object question object suitable for save_options() call or false if cannot handle
      */
-    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+    public function import_from_xml($xml, $fromform, qformat_xml $format, $extra=null) {
         // Check question is for us.
-        $qtype = $data['@']['type'];
+        $qtype = $xml['@']['type'];
         if ($qtype=='ddmatch') {
-            $question = $format->import_headers( $data );
+            $fromform = $format->import_headers($xml);
 
-            // Header parts particular to matching.
-            $question->qtype = $qtype;
-            $question->shuffleanswers = $format->getpath( $data, array( '#', 'shuffleanswers', 0, '#' ), 1 );
-
-            // Get subquestions.
-            $subquestions = $data['#']['subquestion'];
-            $question->subquestions = array();
-            $question->subanswers = array();
+            // Header parts particular to ddmatch qtype.
+            $fromform->qtype = $this->name();
+            $fromform->shuffleanswers = $format->getpath( $xml, array( '#', 'shuffleanswers', 0, '#' ), 1 );
 
             // Run through subquestions.
-            foreach ($subquestions as $subquestion) {
-                $qo = array();
-                $qo['text'] = $format->getpath($subquestion, array('#', 'text', 0, '#'), '', true);
-                $qo['format'] = $format->trans_format(
-                        $format->getpath($subquestion, array('@', 'format'), 'html'));
-                $qo['files'] = array();
+            $fromform->subquestions = array();
+            $fromform->subanswers = array();
+            foreach ($xml['#']['subquestion'] as $subqxml) {
+                $fromform->subquestions[] = $format->import_text_with_files($subqxml,
+                        array(), '', $format->get_format($fromform->questiontextformat));
 
-                $files = $format->getpath($subquestion, array('#', 'file'), array());
-                foreach ($files as $file) {
-                    $record = new stdclass();
-                    $record->content = $file['#'];
-                    $record->encoding = $file['@']['encoding'];
-                    $record->name = $file['@']['name'];
-                    $qo['files'][] = $record;
-                }
-                $question->subquestions[] = $qo;
-                $answers = $format->getpath($subquestion, array('#', 'answer', 0), array());
-                $ans = array();
-                $ans['text'] = $format->getpath($subquestion, array('#', 'answer', 0, '#', 'text', 0, '#'), '', true);
-                $ans['format'] = $format->trans_format(
-                        $format->getpath($answers, array('@', 'format'), 'html'));
-                $ans['files'] = array();
-                $files = $format->getpath($answers, array('#', 'file'), array());
-                foreach ($files as $file) {
-                    $record = new stdclass();
-                    $record->content = $file['#'];
-                    $record->encoding = $file['@']['encoding'];
-                    $record->name = $file['@']['name'];
-                    $ans['files'][] = $record;
-                }
-                $question->subanswers[] = $ans;
+                $answers = $format->getpath($subqxml, array('#', 'answer'), array());
+                $fromform->subanswers[] = $format->import_text_with_files($answers,
+                        array(), '', $format->get_format($fromform->questiontextformat));
             }
-            $format->import_combined_feedback($question, $data, true);
-            $format->import_hints($question, $data, true);
-            return $question;
+
+            $format->import_combined_feedback($fromform, $xml, true);
+            $format->import_hints($fromform, $xml, true);
+            return $fromform;
         } else {
             return false;
         }
