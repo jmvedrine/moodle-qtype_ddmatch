@@ -62,7 +62,7 @@ class qtype_ddmatch extends question_type {
                 continue;
             }
             if ($questiontext['text'] != '' && trim($question->subanswers[$key]['text']) == '') {
-                $result->notice = get_string('nomatchinganswer', 'qtype_ddmatch', $questiontext);
+                $result->notice = get_string('nomatchinganswer', 'qtype_match', $questiontext['text']);
             }
 
             // Update an existing subquestion if possible.
@@ -294,7 +294,7 @@ class qtype_ddmatch extends question_type {
                 $fromform->subquestions[] = $format->import_text_with_files($subqxml,
                         array(), '', $format->get_format($fromform->questiontextformat));
 
-                $answers = $format->getpath($subqxml, array('#', 'answer'), array());
+                $answers = $format->getpath($subqxml, array('#', 'answer', 0), array());
                 $fromform->subanswers[] = $format->import_text_with_files($answers,
                         array(), '', $format->get_format($fromform->questiontextformat));
             }
