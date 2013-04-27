@@ -25,8 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * restore plugin class that provides the necessary information
- * needed to restore one ddmatch qtype plugin
+ * Restore plugin class that provides the necessary information
+ * needed to restore one ddmatch qtype plugin.
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,13 +34,13 @@ defined('MOODLE_INTERNAL') || die();
 class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
     /**
-     * Returns the paths to be handled by the plugin at question level
+     * Returns the paths to be handled by the plugin at question level.
      */
     protected function define_question_plugin_structure() {
 
         $paths = array();
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'matchoptions';
         // We used get_recommended_name() so this works.
         $elepath = $this->get_pathfor('/matchoptions');
@@ -51,11 +51,11 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/matches/match');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths;
     }
 
     /**
-     * Process the qtype/matchoptions element
+     * Process the qtype/matchoptions element.
      */
     public function process_matchoptions($data) {
         global $DB;
@@ -63,12 +63,12 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_match too
+        // If the question has been created by restore, we need to create its question_match too.
         if ($questioncreated) {
             // Fill in some field that were added in 2.1, and so which may be missing
             // from backups made in older versions of Moodle.
@@ -88,20 +88,20 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
                 $data->shownumcorrect = 0;
             }
 
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
             // Keep question_match->subquestions unmodified
             // after_execute_question() will perform the remapping once all subquestions
-            // have been created
-            // Insert record
+            // have been created.
+            // Insert record.
             $newitemid = $DB->insert_record('question_ddmatch', $data);
-            // Create mapping
+            // Create mapping.
             $this->set_mapping('question_ddmatch', $oldid, $newitemid);
         }
     }
 
     /**
-     * Process the qtype/matches/match element
+     * Process the qtype/matches/match element.
      */
     public function process_match($data) {
         global $DB;
@@ -109,27 +109,30 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Detect if the question is created or mapped
+        // Detect if the question is created or mapped.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         if ($questioncreated) {
             // If the question has been created by restore, we need to create its
-            // question_match_sub too
+            // question_match_sub too.
 
-            // Adjust some columns
+            // Adjust some columns.
             $data->question = $newquestionid;
-            // Insert record
+            // Insert record.
             $newitemid = $DB->insert_record('question_ddmatch_sub', $data);
-            // Create mapping (there are files and states based on this)
+            // Create mapping (there are files and states based on this).
             $this->set_mapping('question_ddmatch_sub', $oldid, $newitemid);
+            if (isset($data->code)) {
+                $this->set_mapping('qtype_match_subquestion_codes', $data->code, $newitemid);
+            }
 
         } else {
-            // match questions require mapping of question_ddmatch_sub, because
-            // they are used by question_states->answer
+            // Match questions require mapping of question_ddmatch_sub, because
+            // they are used by question_states->answer.
 
-            // Look for matching subquestion (by question, questiontext and answertext)
+            // Look for matching subquestion (by question, questiontext and answertext).
             $sub = $DB->get_record_select('question_ddmatch_sub', 'question = ? AND ' .
                     $DB->sql_compare_text('questiontext') . ' = ' .
                     $DB->sql_compare_text('?').
@@ -143,13 +146,16 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             // Same fix as match question type in MDL-36683 / MDL-30018.
             if (!$sub) {
                 $params = array('question' => $newquestionid);
-                $potentialsubs = $DB->get_records('question_ddmatch_sub', array('question' => $newquestionid), '', 'id, questiontext, answertext');
+                $potentialsubs = $DB->get_records('question_ddmatch_sub',
+                        array('question' => $newquestionid), '', 'id, questiontext, answertext');
                 foreach ($potentialsubs as $potentialsub) {
                     // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
-                    $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->questiontext); // Clean CTRL chars.
+                    $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '',
+                            $potentialsub->questiontext); // Clean CTRL chars.
                     $cleanquestion = preg_replace("/\r\n|\r/", "\n", $cleanquestion); // Normalize line ending.
 
-                    $cleananswer = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '', $potentialsub->answertext); // Clean CTRL chars.
+                    $cleananswer = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is', '',
+                            $potentialsub->answertext); // Clean CTRL chars.
                     $cleananswer = preg_replace("/\r\n|\r/", "\n", $cleananswer); // Normalize line ending.
 
                     if ($cleanquestion === $data->questiontext && $cleananswer == $data->answertext) {
@@ -158,7 +164,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
                 }
             }
 
-            // Found, let's create the mapping
+            // Found, let's create the mapping.
             if ($sub) {
                 $this->set_mapping('question_ddmatch_sub', $oldid, $sub->id);
             } else {
@@ -179,7 +185,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
     public function after_execute_question() {
         global $DB;
         // Now that all the question_match_subs have been restored, let's process
-        // the created question_match subquestions (list of question_match_sub ids)
+        // the created question_match subquestions (list of question_match_sub ids).
         $rs = $DB->get_recordset_sql(
                 "SELECT qm.id, qm.subquestions
                    FROM {question_ddmatch} qm

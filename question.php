@@ -79,7 +79,7 @@ class qtype_ddmatch_question extends qtype_match_question {
             return array_key_exists($subqid, $this->stems);
         } else if ($component == 'qtype_ddmatch' && $filearea == 'subanswer') {
             $subqid = reset($args);
-            return array_key_exists($subqid, $this->choices);        
+            return array_key_exists($subqid, $this->choices);
         } else if ($component == 'question' && in_array($filearea,
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
             return $this->check_combined_feedback_file_access($qa, $options, $filearea);

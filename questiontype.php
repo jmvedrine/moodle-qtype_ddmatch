@@ -53,7 +53,7 @@ class qtype_ddmatch extends question_type {
         $oldsubquestions = $DB->get_records('question_ddmatch_sub',
                 array('question' => $question->id), 'id ASC');
 
-        // $subquestions will be an array with subquestion ids
+        // Build $subquestions to be an array with subquestion ids.
         $subquestions = array();
 
         // Insert all the new question+answer pairs.

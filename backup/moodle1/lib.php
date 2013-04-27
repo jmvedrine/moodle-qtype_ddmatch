@@ -68,13 +68,19 @@ class moodle1_qtype_ddmatch_handler extends moodle1_qtype_handler {
                 if ($CFG->texteditors !== 'textarea' and $data['oldquestiontextformat'] == FORMAT_MOODLE) {
                     $match['questiontext'] = text_to_html($match['questiontext'], false, false, true);
                     $match['questiontextformat'] = FORMAT_HTML;
+                } else {
+                    $match['questiontextformat'] = $data['oldquestiontextformat'];
+                }
+                if ($CFG->texteditors !== 'textarea' and $data['oldquestiontextformat'] == FORMAT_MOODLE) {
                     $match['answertext'] = text_to_html($match['answertext'], false, false, true);
                     $match['answertextformat'] = FORMAT_HTML;
                 } else {
-                    $match['questiontextformat'] = $data['oldquestiontextformat'];
                     $match['answertextformat'] = $data['oldquestiontextformat'];
                 }
-
+                $match['questiontext'] = $this->migrate_files(
+                        $match['questiontext'], 'qtype_ddmatch', 'subquestion', $match['id']);
+                $match['answertext'] = $this->migrate_files(
+                        $match['answertext'], 'qtype_ddmatch', 'subanswer', $match['id']);
                 $this->write_xml('match', $match, array('/match/id'));
             }
         }
