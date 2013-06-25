@@ -48,14 +48,14 @@ class backup_qtype_ddmatch_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures.
         $matchoptions = new backup_nested_element('matchoptions', array('id'), array(
-            'subquestions', 'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
+            'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
         $matches = new backup_nested_element('matches');
 
         $match = new backup_nested_element('match', array('id'), array(
-            'code', 'questiontext', 'questiontextformat', 'answertext', 'answertextformat'));
+            'questiontext', 'questiontextformat', 'answertext', 'answertextformat'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($matchoptions);
@@ -63,14 +63,9 @@ class backup_qtype_ddmatch_plugin extends backup_qtype_plugin {
         $matches->add_child($match);
 
         // Set source to populate the data.
-        $matchoptions->set_source_table('question_ddmatch',
-                array('question' => backup::VAR_PARENTID));
-        $match->set_source_sql('
-                SELECT *
-                FROM {question_ddmatch_sub}
-                WHERE question = :question
-                ORDER BY id',
-                array('question' => backup::VAR_PARENTID));
+        $matchoptions->set_source_table('qtype_ddmatch_options',
+                array('questionid' => backup::VAR_PARENTID));
+        $match->set_source_table('qtype_match_subquestions', array('questionid' => backup::VAR_PARENTID), 'id ASC');
 
         // Don't need to annotate ids nor files.
 
@@ -85,10 +80,10 @@ class backup_qtype_ddmatch_plugin extends backup_qtype_plugin {
      */
     public static function get_qtype_fileareas() {
         return array(
-            'correctfeedback' => 'question_ddmatch',
-            'partiallycorrectfeedback' => 'question_ddmatch',
-            'incorrectfeedback' => 'question_ddmatch',
-            'subquestion'   => 'question_ddmatch_sub',
-            'subanswer'     => 'question_ddmatch_sub');
+            'correctfeedback' => 'question_created',
+            'partiallycorrectfeedback' => 'question_created',
+            'incorrectfeedback' => 'question_created',
+            'subquestion' => 'qtype_ddmatch_subquestions',
+            'subanswer' => 'qtype_ddmatch_subquestions');
     }
 }

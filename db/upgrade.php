@@ -191,5 +191,144 @@ function xmldb_qtype_ddmatch_upgrade($oldversion) {
         // Plugin ddmatch savepoint reached.
         upgrade_plugin_savepoint(true, 2011080500, 'qtype', 'ddmatch');
     }
+
+    if ($oldversion < 2013062400) {
+
+        // Define table question_ddmatch to be renamed to qtype_ddmatch_options.
+        $table = new xmldb_table('question_ddmatch');
+
+        // Launch rename table for qtype_ddmatch_options.
+        $dbman->rename_table($table, 'qtype_ddmatch_options');
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062400, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062401) {
+
+        // Define key question (foreign) to be dropped form qtype_ddmatch_options.
+        $table = new xmldb_table('qtype_ddmatch_options');
+        $key = new xmldb_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
+        // Launch drop key question.
+        $dbman->drop_key($table, $key);
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062401, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062402) {
+
+        // Rename field question on table qtype_ddmatch_options to questionid.
+        $table = new xmldb_table('qtype_ddmatch_options');
+        $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
+
+        // Launch rename field question.
+        $dbman->rename_field($table, $field, 'questionid');
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062402, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062403) {
+
+        // Define key questionid (foreign-unique) to be added to qtype_ddmatch_options.
+        $table = new xmldb_table('qtype_ddmatch_options');
+        $key = new xmldb_key('questionid', XMLDB_KEY_FOREIGN_UNIQUE, array('questionid'), 'question', array('id'));
+
+        // Launch add key questionid.
+        $dbman->add_key($table, $key);
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062403, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062404) {
+
+        // Define field subquestions to be dropped from qtype_ddmatch_options.
+        $table = new xmldb_table('qtype_ddmatch_options');
+        $field = new xmldb_field('subquestions');
+
+        // Conditionally launch drop field subquestions.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062404, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062405) {
+
+        // Define table question_ddmatch_sub to be renamed to qtype_ddmatch_subquestions.
+        $table = new xmldb_table('question_ddmatch_sub');
+
+        // Launch rename table for qtype_ddmatch_subquestions.
+        $dbman->rename_table($table, 'qtype_ddmatch_subquestions');
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062405, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062406) {
+
+        // Define key question (foreign) to be dropped form qtype_ddmatch_subquestions.
+        $table = new xmldb_table('qtype_ddmatch_subquestions');
+        $key = new xmldb_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
+        // Launch drop key question.
+        $dbman->drop_key($table, $key);
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062406, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062407) {
+
+        // Rename field question on table qtype_ddmatch_subquestions to questionid.
+        $table = new xmldb_table('qtype_ddmatch_subquestions');
+        $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
+
+        // Launch rename field question.
+        $dbman->rename_field($table, $field, 'questionid');
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062407, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062408) {
+
+        // Define key questionid (foreign) to be added to qtype_ddmatch_subquestions.
+        $table = new xmldb_table('qtype_ddmatch_subquestions');
+        $key = new xmldb_key('questionid', XMLDB_KEY_FOREIGN, array('questionid'), 'question', array('id'));
+
+        // Launch add key questionid.
+        $dbman->add_key($table, $key);
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062408, 'qtype', 'ddmatch');
+    }
+
+    if ($oldversion < 2013062409) {
+
+        // Define field code to be dropped from qtype_ddmatch_subquestions.
+        // The field code has not been needed since the new question engine in
+        // Moodle 2.1. It should be safe to drop it now.
+        $table = new xmldb_table('qtype_ddmatch_subquestions');
+        $field = new xmldb_field('code');
+
+        // Conditionally launch drop field code.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2013062409, 'qtype', 'ddmatch');
+    }
+
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
+
+
     return true;
 }
