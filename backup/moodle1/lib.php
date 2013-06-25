@@ -32,8 +32,7 @@ class moodle1_qtype_ddmatch_handler extends moodle1_qtype_handler {
      */
     public function get_question_subpaths() {
         return array(
-            'DDMATCHOPTIONS',
-            'DDMATCHS/MATCH',
+            'DDMATCHS/MATCH'
         );
     }
 
@@ -54,11 +53,7 @@ class moodle1_qtype_ddmatch_handler extends moodle1_qtype_handler {
         }
 
         // Convert match options.
-        if (isset($data['matchoptions'])) {
-            $matchoptions = $data['matchoptions'][0];
-        } else {
-            $matchoptions = array('shuffleanswers' => 1);
-        }
+        $matchoptions = array();
         $matchoptions['id'] = $this->converter->get_nextid();
         $matchoptions['subquestions'] = implode(',', $matchids);
         $matchoptions['shuffleanswers'] = $data['shuffleanswers'];
