@@ -68,7 +68,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_match too.
+        // If the question has been created by restore, we need to create its question_ddmatch too.
         if ($questioncreated) {
             // Fill in some field that were added in 2.1, and so which may be missing
             // from backups made in older versions of Moodle.
@@ -90,7 +90,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
             // Adjust some columns.
             $data->question = $newquestionid;
-            // Keep question_match->subquestions unmodified
+            // Keep question_ddmatch->subquestions unmodified
             // after_execute_question() will perform the remapping once all subquestions
             // have been created.
             // Insert record.
@@ -116,7 +116,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
         if ($questioncreated) {
             // If the question has been created by restore, we need to create its
-            // question_match_sub too.
+            // question_ddmatch_sub too.
 
             // Adjust some columns.
             $data->question = $newquestionid;
@@ -125,7 +125,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             // Create mapping (there are files and states based on this).
             $this->set_mapping('question_ddmatch_sub', $oldid, $newitemid);
             if (isset($data->code)) {
-                $this->set_mapping('qtype_match_subquestion_codes', $data->code, $newitemid);
+                $this->set_mapping('qtype_ddmatch_subquestion_codes', $data->code, $newitemid);
             }
 
         } else {
@@ -168,7 +168,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             if ($sub) {
                 $this->set_mapping('question_ddmatch_sub', $oldid, $sub->id);
             } else {
-                throw new restore_step_exception('error_question_match_sub_missing_in_db', $data);
+                throw new restore_step_exception('error_question_ddmatch_sub_missing_in_db', $data);
             }
         }
     }
@@ -179,13 +179,13 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
      * has ended processing the whole xml structure. Its name is:
      * "after_execute_" + connectionpoint ("question")
      *
-     * For match qtype we use it to restore the subquestions column,
-     * containing one list of question_match_sub ids
+     * For ddmatch qtype we use it to restore the subquestions column,
+     * containing one list of question_ddmatch_sub ids
      */
     public function after_execute_question() {
         global $DB;
-        // Now that all the question_match_subs have been restored, let's process
-        // the created question_match subquestions (list of question_match_sub ids).
+        // Now that all the question_ddmatch_subs have been restored, let's process
+        // the created question_ddmatch subquestions (list of question_ddmatch_sub ids).
         $rs = $DB->get_recordset_sql(
                 "SELECT qm.id, qm.subquestions
                    FROM {question_ddmatch} qm
@@ -199,7 +199,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
                         'question_ddmatch_sub', $subquestion);
             }
             $subquestions = implode(',', $subquestionsarr);
-            $DB->set_field('question_match', 'subquestions', $subquestions,
+            $DB->set_field('question_ddmatch', 'subquestions', $subquestions,
                     array('id' => $rec->id));
         }
         $rs->close();
@@ -207,20 +207,20 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
     public function recode_response($questionid, $sequencenumber, array $response) {
         if (array_key_exists('_stemorder', $response)) {
-            $response['_stemorder'] = $this->recode_match_sub_order($response['_stemorder']);
+            $response['_stemorder'] = $this->recode_ddmatch_sub_order($response['_stemorder']);
         }
         if (array_key_exists('_choiceorder', $response)) {
-            $response['_choiceorder'] = $this->recode_match_sub_order($response['_choiceorder']);
+            $response['_choiceorder'] = $this->recode_ddmatch_sub_order($response['_choiceorder']);
         }
         return $response;
     }
 
     /**
      * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for match questions
+     * recoded pointing to all the restored stuff for ddmatch questions
      *
      * answer is one comma separated list of hypen separated pairs
-     * containing question_match_sub->id and question_match_sub->code
+     * containing question_ddmatch_sub->id and question_ddmatch_sub->code
      */
     public function recode_legacy_state_answer($state) {
         $answer = $state->answer;
@@ -240,7 +240,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
      * @param string $order the original order.
      * @return string the recoded order.
      */
-    protected function recode_match_sub_order($order) {
+    protected function recode_ddmatch_sub_order($order) {
         $neworder = array();
         foreach (explode(',', $order) as $id) {
             if ($newid = $this->get_mappingid('question_ddmatch_sub', $id)) {
