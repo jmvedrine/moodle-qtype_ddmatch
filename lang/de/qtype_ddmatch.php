@@ -17,16 +17,17 @@
 
 /**
  * The language strings for the match question type.
- *    
+ *
  * @package    qtype_ddmatch
  * @copyright Adriane Boyd (adrianeboyd@gmail.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-$string['pluginname'] = 'Drag-and-Drop Matching';
-$string['draganswerhere'] = 'Drag answer here';
-$string['pluginname_help'] = 'Drag-and-drop matching questions require the respondent to correctly match a list of names or statements (questions) to another list of names or statements (answers).';
+$string['pluginname'] = 'Drag-and-Drop-Zuordnung';
+$string['draganswerhere'] = 'Ziehen Sie die richtige Antwort in diesen Bereich';
+$string['editingddmatch'] = 'Drag-and-Drop Zuordnungsfrage bearbeiten';
+$string['pluginname_help'] = 'Bei Drag-and-drop matching question müssen die Benutzer eine Liste von Namen oder Aussagen (Fragen) korrekt mit einer zweiten Liste von Namen oder Aussagen (Antworten) verbinden.';
 $string['pluginname_link'] = 'question/type/ddmatch';
-$string['pluginnameadding'] = 'Adding Drag-and-Drop Matching Question';
-$string['pluginnameediting'] = 'Editing Drag-and-Drop Matching Question';
-$string['pluginnamesummary'] = 'An extension of the matching question that allows the user to drag and drop items to match answers to subquestions.';
+$string['pluginnameadding'] = 'Drag-and-Drop Zuordnungsfrage hinzufügen';
+$string['pluginnameediting'] = 'Drag-and-Drop Zuordnungsfrage bearbeiten';
+$string['pluginnamesummary'] = 'Eine Erweiterung der Zuordnungsfrage, die dem Benutzer ermöglicht, Antworte per Drag-and-Drop zuzuordnen.';
