@@ -144,18 +144,14 @@ class qtype_ddmatch_edit_form extends question_edit_form {
             }
         }
         $numberqanda = new stdClass();
-        $numberqanda->q = 2;
-        $numberqanda->a = 3;
+        $numberqanda->q = 1;
+        $numberqanda->a = 2;
         if ($questioncount < 1) {
             $errors['subquestions[0]'] =
                     get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
-        if ($questioncount < 2) {
-            $errors['subquestions[1]'] =
-                    get_string('notenoughqsandas', 'qtype_match', $numberqanda);
-        }
-        if ($answercount < 3) {
-            $errors['subanswers[2]'] =
+        if ($answercount < 2) {
+            $errors['subanswers[1]'] =
                     get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
         return $errors;
