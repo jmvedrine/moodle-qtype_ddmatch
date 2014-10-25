@@ -87,7 +87,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
-            'id' => '695',
+            'id' => 695,
             'category' => '65',
             'parent' => '0',
             'name' => 'Question 7',
@@ -107,7 +107,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'createdby' => null,
             'modifiedby' => null,
             'unlimited' => null,
-            'maxmark' => '3',
+            'maxmark' => 3,
             'options' => (object) array(
                 'id' => '27',
                 'question' => '695',
@@ -200,7 +200,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
                 'originalquestion' => '0',
                 'seq_number' => '2',
                 'answer' => '148-511093512,149-10881658,150-661953276,151-0,152-0',
-                'timestamp' => '1177419956',
+                'timestamp' => 1177419956,
                 'event' => '2',
                 'grade' => '0',
                 'raw_grade' => '3',
@@ -213,7 +213,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
                 'originalquestion' => '0',
                 'seq_number' => '3',
                 'answer' => '148-511093512,149-10881658,150-661953276,151-0,152-0',
-                'timestamp' => '1177419956',
+                'timestamp' => 1177419956,
                 'event' => '6',
                 'grade' => '3',
                 'raw_grade' => '3',
@@ -230,6 +230,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 3,
             'minfraction' => 0,
+			'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Associate the appropriate definition with each term. {Active adjacent system; Autonomous adjacent system; Cooperative adjacent system} -> {A system that interacts with or participates in the work.; An external entity that acts independently of the work under study.; A system that is involved in the response to a business event.; A system which does not supply or receive data from the work.; An external entity that performs part of the work under study.}',
             'rightanswer' => 'Active adjacent system -> A system that interacts with or participates in the work.; Autonomous adjacent system -> An external entity that acts independently of the work under study.; Cooperative adjacent system -> A system that is involved in the response to a business event.',
@@ -281,7 +282,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
                         $order[$expectedqa->steps[$i]->data['sub' . $sub]] + 1;
             }
         }
-
+		
         $this->compare_qas($expectedqa, $qa);
     }
 
@@ -327,7 +328,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'sumgrades' => '3.99998',
             'timestart' => '1168267317',
             'timefinish' => '1168267508',
-            'timemodified' => '1168267508',
+            'timemodified' => 1168267508,
             'layout' => '509,510,511,738,514,0',
             'preview' => '0',
             'needsupgradetonewqe' => '1',
@@ -357,7 +358,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'createdby' => null,
             'modifiedby' => null,
             'unlimited' => null,
-            'maxmark' => '1',
+            'maxmark' => 1,
             'options' => (object) array(
                 'id' => '35',
                 'question' => '738',
@@ -402,7 +403,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
         $qsession = (object) array(
             'id' => '9258',
             'attemptid' => '1065',
-            'questionid' => '738',
+            'questionid' => 738,
             'newest' => '24966',
             'newgraded' => '24966',
             'sumpenalty' => '0',
@@ -447,6 +448,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+			'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
             'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
@@ -569,7 +571,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'createdby' => null,
             'modifiedby' => null,
             'unlimited' => null,
-            'maxmark' => '1',
+            'maxmark' => 1,
             'options' => (object) array(
                 'id' => '279',
                 'question' => '11135',
@@ -614,7 +616,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
         $qsession = (object) array(
             'id' => '356418',
             'attemptid' => '23777',
-            'questionid' => '11135',
+            'questionid' => 11135,
             'newest' => '862740',
             'newgraded' => '862740',
             'sumpenalty' => '0.1',
@@ -711,6 +713,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+			'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
             'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
