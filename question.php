@@ -62,7 +62,7 @@ class qtype_ddmatch_question extends qtype_match_question {
                 $choiceid = $this->choiceorder[$response[$this->field($key)]];
                 $choicesummarise = $this->html_to_text($this->choices[$choiceid],
                         $this->choiceformat[$choiceid]);
-                $matches[] =  $stemssummarise. ' -> ' .$choicesummarise;
+                $matches[] = $stemssummarise. ' -> ' .$choicesummarise;
             }
         }
 

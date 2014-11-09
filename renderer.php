@@ -47,15 +47,13 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $output .= $this->construct_questiontext($question->format_questiontext($qa));
         $output .= $this->construct_answerblock($qa, $question, $options);
 
-        if ($this->can_use_drag_and_drop()) {
-            $this->page->requires->string_for_js('draganswerhere', 'qtype_ddmatch');
-            $this->page->requires->yui_module('moodle-qtype_ddmatch-dragdrop',
-                    'M.qtype.ddmatch.init_dragdrop', array(array(
-                        'questionid' => $qa->get_slot(),
-                        'readonly' => $options->readonly,
-                    ))
-            );
-        }
+        $this->page->requires->string_for_js('draganswerhere', 'qtype_ddmatch');
+        $this->page->requires->yui_module('moodle-qtype_ddmatch-dragdrop',
+                'M.qtype.ddmatch.init_dragdrop', array(array(
+                    'questionid' => $qa->get_slot(),
+                    'readonly' => $options->readonly,
+                ))
+        );
 
         if ($qa->get_state() === question_state::$invalid) {
             $response = $qa->get_last_qt_data();
@@ -65,22 +63,6 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         return $output;
-    }
-
-    /**
-     * Check whether drag and drop is supported
-     *
-     * @return boolean Whether or not to generate the drag and drop content
-     */
-    protected function can_use_drag_and_drop() {
-        global $USER, $CFG;
-
-        // Note: The screenreader setting no longer exists from Moodle 2.4.
-        if (!$CFG->enableajax || !empty($USER->screenreader)) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -180,22 +162,17 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
                 $feedbackimage = $this->feedback_image($fraction);
             }
 
-            if ($this->can_use_drag_and_drop()) {
-                $dragdropclasses = $classes;
-                $classes[] = 'hiddenifjs';
-                $dragdropclasses[] = 'visibleifjs';
-            }
+            $dragdropclasses = $classes;
+            $classes[] = 'hiddenifjs';
+            $dragdropclasses[] = 'visibleifjs';
 
             $o .= html_writer::tag('td',
                     $this->construct_choice_cell_select($qa, $options, $choices, $stemid, $curfieldname, $selected) .
                     ' ' . $feedbackimage, array('class' => implode(' ', $classes)));
 
-            if ($this->can_use_drag_and_drop()) {
-                // Only add the dragdrop divs if drag drop is enabled.
-                $o .= html_writer::tag('td',
-                        $this->construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) .
-                        ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
-            }
+            $o .= html_writer::tag('td',
+                    $this->construct_choice_cell_dragdrop($qa, $options, $choices, $stemid, $curfieldname, $selected) .
+                    ' ' . $feedbackimage, array('class' => implode(' ', $dragdropclasses)));
 
             $o .= html_writer::end_tag('tr');
             $parity = 1 - $parity;
@@ -203,9 +180,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $o .= html_writer::end_tag('tbody');
         $o .= html_writer::end_tag('table');
 
-        if ($this->can_use_drag_and_drop()) {
-            $o .= $this->construct_available_dragdrop_choices($qa, $question);
-        }
+        $o .= $this->construct_available_dragdrop_choices($qa, $question);
 
         $o .= html_writer::end_tag('div');
         $o .= html_writer::tag('div', '', array('class' => 'clearer'));

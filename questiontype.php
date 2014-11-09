@@ -262,7 +262,7 @@ class qtype_ddmatch extends question_type {
     public function import_from_xml($xml, $fromform, qformat_xml $format, $extra=null) {
         // Check question is for us.
         $qtype = $xml['@']['type'];
-        if ($qtype=='ddmatch') {
+        if ($qtype == 'ddmatch') {
             $fromform = $format->import_headers($xml);
 
             // Header parts particular to ddmatch qtype.

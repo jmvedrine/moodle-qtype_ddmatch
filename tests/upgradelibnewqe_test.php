@@ -230,6 +230,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 3,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Associate the appropriate definition with each term. {Active adjacent system; Autonomous adjacent system; Cooperative adjacent system} -> {A system that interacts with or participates in the work.; An external entity that acts independently of the work under study.; A system that is involved in the response to a business event.; A system which does not supply or receive data from the work.; An external entity that performs part of the work under study.}',
             'rightanswer' => 'Active adjacent system -> A system that interacts with or participates in the work.; Autonomous adjacent system -> An external entity that acts independently of the work under study.; Cooperative adjacent system -> A system that is involved in the response to a business event.',
@@ -271,7 +272,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             ),
         );
 
-        // This is a random thing, so just set expected to actual:
+        // This is a random thing, so just set expected to actual.
         $expectedqa->steps[0]->data['_choiceorder'] = $qa->steps[0]->data['_choiceorder'];
         $order = explode(',', $qa->steps[0]->data['_choiceorder']);
         $order = array_combine(array_values($order), array_keys($order));
@@ -447,6 +448,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
             'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',
@@ -467,12 +469,12 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
                     'fraction' => 1,
                     'timecreated' => 1168267508,
                     'userid' => 182682,
-                    'data' => array('sub0' => 213, 'sub1' => 214,'sub2' => 214,'sub3' => 213, '-finish' => 1),
+                    'data' => array('sub0' => 213, 'sub1' => 214, 'sub2' => 214, 'sub3' => 213, '-finish' => 1),
                 ),
             ),
         );
 
-        // This is a random thing, so just set expected to actual:
+        // This is a random thing, so just set expected to actual.
         $expectedqa->steps[0]->data['_choiceorder'] = $qa->steps[0]->data['_choiceorder'];
         $order = explode(',', $qa->steps[0]->data['_choiceorder']);
         $order = array_combine(array_values($order), array_keys($order));
@@ -711,6 +713,7 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? {Subject gateways provide links to sites that have been quality checked; Subject gateways offer more variety than search engines; Subject gateways index websites automatically; Subject gateways can provide a more direct route to websites containing academic content} -> {True; False}',
             'rightanswer' => 'Subject gateways provide links to sites that have been quality checked -> True; Subject gateways offer more variety than search engines -> False; Subject gateways index websites automatically -> False; Subject gateways can provide a more direct route to websites containing academic content -> True',

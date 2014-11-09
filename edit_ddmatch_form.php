@@ -41,9 +41,9 @@ class qtype_ddmatch_edit_form extends question_edit_form {
 
         $repeated = array();
         $repeated[] = $mform->createElement('editor', 'subquestions',
-                $label, array('rows'=>3), $this->editoroptions);
+                $label, array('rows' => 3), $this->editoroptions);
         $repeated[] = $mform->createElement('editor', 'subanswers',
-                get_string('answer'), array('rows'=>3), $this->editoroptions);
+                get_string('answer'), array('rows' => 3), $this->editoroptions);
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_RAW;
         $answersoption = 'subquestions';
