@@ -34,6 +34,19 @@ defined('MOODLE_INTERNAL') || die();
 class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
     /**
+     * A simple answer, questiontext to id cache for a ddmatch answers.
+     * @var array
+     */
+    private $questionsubcache = array();
+
+    /**
+     * The id of the current question in the questionsubcache.
+     * @var int
+     */
+    private $questionsubcacheid = null;
+
+
+    /**
      * Returns the paths to be handled by the plugin at question level.
      */
     protected function define_question_plugin_structure() {
@@ -90,8 +103,13 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
 
             // Adjust some columns.
             $data->questionid = $newquestionid;
-            $newitemid = $DB->insert_record('qtype_ddmatch_options', $data);
-            $this->set_mapping('qtype_ddmatch_options', $oldid, $newitemid);
+
+            // It is possible for old backup files to contain unique key violations.
+            // We need to check to avoid that.
+            if (!$DB->record_exists('qtype_ddmatch_options', array('questionid' => $data->questionid))) {
+                $newitemid = $DB->insert_record('qtype_ddmatch_options', $data);
+                $this->set_mapping('qtype_ddmatch_options', $oldid, $newitemid);
+            }
         }
     }
 
@@ -124,21 +142,20 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             }
 
         } else {
-            // Match questions require mapping of qtype_ddmatch_subquestions, because
+            // ddmatch questions require mapping of qtype_ddmatch_subquestions, because
             // they are used by question_states->answer.
 
-            // Look for matching subquestion (by questionid, questiontext and answertext).
-            $sub = $DB->get_record_select('qtype_ddmatch_subquestions', 'questionid = ? AND ' .
-                    $DB->sql_compare_text('questiontext') . ' = ' .
-                    $DB->sql_compare_text('?').' AND answertext = ?',
-                            array($newquestionid, $data->questiontext, $data->answertext),
-                            'id', IGNORE_MULTIPLE);
+            // Have we cached the current question?
+            if ($this->questionsubcacheid !== $newquestionid) {
+                // The question changed, purge and start again!
+                $this->questionsubcache = array();
 
-            // Not able to find the answer, let's try cleaning the answertext
-            // of all the match subquestions in DB as slower fallback. Same fix as in MDL-36683 / MDL-30018.
-            if (!$sub) {
+                $params = array('question' => $newquestionid);
                 $potentialsubs = $DB->get_records('qtype_ddmatch_subquestions',
                         array('questionid' => $newquestionid), '', 'id, questiontext, answertext');
+
+                $this->questionsubcacheid = $newquestionid;
+                // Cache all cleaned answers and questiontext.
                 foreach ($potentialsubs as $potentialsub) {
                     // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
                     $cleanquestion = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is',
@@ -149,19 +166,18 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
                             '', $potentialsub->answertext); // Clean CTRL chars.
                     $cleananswer = preg_replace("/\r\n|\r/", "\n", $cleananswer); // Normalize line ending.
 
-                    if ($cleanquestion === $data->questiontext && $cleananswer == $data->answertext) {
-                        $sub = $potentialsub;
-                    }
+                    $this->questionsubcache[$cleanquestion][$cleananswer] = $potentialsub->id;
                 }
             }
 
-            // Found one. Let's create the mapping.
-            if ($sub) {
-                $this->set_mapping('qtype_ddmatch_subquestions', $oldid, $sub->id);
-            } else {
+            if (!isset($this->questionsubcache[$data->questiontext][$data->answertext])) {
                 throw new restore_step_exception('error_qtype_ddmatch_subquestion_missing_in_db', $data);
             }
+            $newitemid = $this->questionsubcache[$data->questiontext][$data->answertext];
         }
+
+        // Found one. Let's create the mapping.
+        $this->set_mapping('qtype_ddmatch_subquestions', $oldid, $newitemid);
     }
 
     public function recode_response($questionid, $sequencenumber, array $response) {

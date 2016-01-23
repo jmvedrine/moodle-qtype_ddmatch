@@ -18,8 +18,7 @@
  * Tests of the upgrade to the new Moodle question engine for attempts at
  * ddmatch questions.
  *
- * @package    qtype
- * @subpackage ddmatch
+ * @package    qtype_ddmatch
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +59,6 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'questionsperpage' => '2',
             'shufflequestions' => '0',
             'shuffleanswers' => '0',
-            'questions' => '689,690,0,691,692,0,693,694,0,695,696,0,697,698,0',
             'sumgrades' => '48',
             'grade' => '48',
             'timecreated' => '0',
@@ -84,7 +82,6 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'timemodified' => '1168015476',
             'layout' => '689,690,0,691,692,0,693,694,0,695,696,0,697,698,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '695',
@@ -307,7 +304,6 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '0',
-            'questions' => '509,0,510,0,511,0,738,0,514,0',
             'sumgrades' => '5',
             'grade' => '10',
             'timecreated' => '0',
@@ -331,7 +327,6 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'timemodified' => '1168267508',
             'layout' => '509,510,511,738,514,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '738',
@@ -509,7 +504,6 @@ class qtype_ddmatch_attempt_upgrader_test extends question_attempt_upgrader_test
             'questionsperpage' => '1',
             'shufflequestions' => '0',
             'shuffleanswers' => '1',
-            'questions' => '11163,0,11164,0,11165,0,11135,0,11166,0',
             'sumgrades' => '5',
             'grade' => '10',
             'timecreated' => '0',
