@@ -1,6 +1,11 @@
+.jsenabled .ddmatch td.visibleifjs {
+  display: block;
+}
+
 .ddmatch li {
     margin: 6px;
     padding: 4px;
+    list-style-type: none !important;
 }
 
 .ddmatch li.matchdrag {
@@ -22,21 +27,12 @@
     float: right;
 }
 
-.ddmatch .matchorigin li {
-    list-style:none;
-}
-
 .ddmatch .matchtarget {
     border: 1px solid black;
     list-style: none;
     min-height: 30px;
     margin: 6px;
     padding: 4px;
-    width: 100%;
-}
-
-.ddmatch .matchtarget li {
-    list-style:none;
 }
 
 .ddmatch li p {
