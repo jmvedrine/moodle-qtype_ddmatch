@@ -23,3 +23,9 @@ Grading:
 The grading is identical to the original matching question.
 
 This version can be used with Moodle 2.4.1 and ulterior versions.
+
+WARNING : Hello,
+I am now retired and I stopped all Moodle related activities.
+This repository is here just for history and this work is not maintained any more.
+Feel free to fork it and modify it to suit your needs or improve compatibility with recent Moodle versions.
+Additionaly you can consider contacting the Moodle team and become the new maintainer of this lugin. Thanks
