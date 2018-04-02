@@ -231,6 +231,9 @@ class qtype_ddmatch extends question_type {
         $expout = '';
         $fs = get_file_storage();
         $contextid = $question->contextid;
+        $expout .= "    <shuffleanswers>" .
+                $format->get_single($question->options->shuffleanswers) .
+                "</shuffleanswers>\n";
         $expout .= $format->write_combined_feedback($question->options,
                                                     $question->id,
                                                     $question->contextid);
@@ -267,7 +270,8 @@ class qtype_ddmatch extends question_type {
 
             // Header parts particular to ddmatch qtype.
             $fromform->qtype = $this->name();
-            $fromform->shuffleanswers = $format->getpath( $xml, array( '#', 'shuffleanswers', 0, '#' ), 1 );
+            $fromform->shuffleanswers = $format->trans_single($format->getpath($xml,
+                    array('#', 'shuffleanswers', 0, '#'), 1));
 
             // Run through subquestions.
             $fromform->subquestions = array();
