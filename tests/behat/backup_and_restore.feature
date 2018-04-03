@@ -34,7 +34,7 @@ Feature: Test duplicating a quiz containing a Drag and drop matching question
     And I navigate to "Question bank" node in "Course administration"
     And I click on "Edit" "link" in the "ddmatch-001" "table_row"
     Then the following fields match these values:
-      | Question name                      | Drag and drop matching question  |
+      | Question name                      | ddmatch-001                      |
       | Question text                      | Classify the animals.            |
       | General feedback                   | General feedback.                |
       | Default mark                       | 1                                |
