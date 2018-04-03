@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_match_test_helper extends question_test_helper {
+class qtype_ddmatch_test_helper extends question_test_helper {
     public function get_test_questions() {
         return array('foursubq');
     }

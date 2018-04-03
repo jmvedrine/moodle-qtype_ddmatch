@@ -1,4 +1,4 @@
-qtype @qtype_ddmatch
+@qtype @qtype_ddmatch
 Feature: Test importing Drag and drop matching questions
   As a teacher
   In order to reuse Drag and drop matching questions

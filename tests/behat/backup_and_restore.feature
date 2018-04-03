@@ -25,7 +25,7 @@ Feature: Test duplicating a quiz containing a Drag and drop matching question
     And I log in as "admin"
     And I am on "Course 1" course homepage
 
-  @javascript
+@javascript
   Scenario: Backup and restore a course containing a Drag and drop matching question
     When I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
