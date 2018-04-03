@@ -17,7 +17,7 @@
 
 /**
  * The language strings for the match question type.
- *    
+ *
  * @package    qtype_ddmatch
  * @copyright Adriane Boyd (adrianeboyd@gmail.com)
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License

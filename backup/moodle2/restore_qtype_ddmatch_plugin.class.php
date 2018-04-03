@@ -142,7 +142,7 @@ class restore_qtype_ddmatch_plugin extends restore_qtype_plugin {
             }
 
         } else {
-            // ddmatch questions require mapping of qtype_ddmatch_subquestions, because
+            // The ddmatch questions require mapping of qtype_ddmatch_subquestions, because
             // they are used by question_states->answer.
 
             // Have we cached the current question?

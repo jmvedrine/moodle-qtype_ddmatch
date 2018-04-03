@@ -19,7 +19,7 @@ Feature: Test creating a drag and drop matching question
     And I navigate to "Question bank" node in "Course administration"
 
   Scenario: Create a drag and drop matching question
-    When I add a " Drag-and-Drop Matching" question filling the form with:
+    When I add a "Drag-and-Drop Matching" question filling the form with:
       | Question name                      | ddmatch-001                                    |
       | Question text                      | Match the country with the capital city.       |
       | General feedback                   | England=London, France=Paris and Spain=Madrid. |
