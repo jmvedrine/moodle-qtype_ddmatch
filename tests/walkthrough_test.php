@@ -195,7 +195,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -247,7 +247,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[1], false),
                 $this->get_contains_select_expectation('sub3', $choices, null, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_partcorrect_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -314,7 +314,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[2], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[1], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -361,7 +361,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 '(1, 2] -> 1 < x ≤ 2; [1, 2] -> 1 ≤ x ≤ 2; [1, 2) -> 1 ≤ x < 2';
 
         $this->process_submission($rightresponse);
-        $this->process_submission(array('-finish' => 1));
+        $this->finish();
 
         $this->assertEquals($rightresponsesummary, $m->summarise_response($rightresponse));
 
@@ -423,7 +423,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                         $this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub3', '0'),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint.'));
 
         // Try again.
@@ -465,7 +465,7 @@ class qtype_ddmatch_walkthrough_test extends qbehaviour_walkthrough_test_base {
                         $this->quba->get_field_prefix($this->slot) . 'sub2', $orderforchoice[2]),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[1]),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the second hint.'));
 
         // Try again.
