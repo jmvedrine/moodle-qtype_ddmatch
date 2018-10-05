@@ -330,5 +330,14 @@ function xmldb_qtype_ddmatch_upgrade($oldversion) {
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016012301) {
+        $table = new xmldb_table('qtype_ddmatch_subquestions');
+
+        $field = new xmldb_field('answertext', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'questiontextformat');
+        $dbman->change_field_type($table, $field);
+
+        // Record that qtype_ddmatch savepoint was reached.
+        upgrade_plugin_savepoint(true, 2016012301, 'qtype', 'ddmatch');
+    }
     return true;
 }
