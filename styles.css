@@ -72,7 +72,7 @@
 }
 
 .ddmatch .matchtarget.yui3-dd-drop-over {
-    border: 2px dotted green;
+    border: 2px solid green;
 }
 
 .matchtarget .placeholder.hidden {
@@ -80,7 +80,7 @@
 }
 
 .ddmatch .matchtarget.yui3-dd-drop-over li {
-    background-color: blue;
+    background-color: #EEE;
 }
 
 /* Editing form. */
