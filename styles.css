@@ -4,8 +4,8 @@
 }
 
 .ddmatch li.matchdrag {
-    border: 1px solid black;
     background-color: white;
+    border: 1px solid black;
 }
 
 .ddmatch li.placeholder {
@@ -14,12 +14,12 @@
 }
 
 .ddmatch ul.matchorigin {
-    width: 35%;
     border: 1px solid gray;
+    float: right;
     list-style: none;
     margin: 6px;
     padding: 4px;
-    float: right;
+    width: 35%;
 }
 
 .ddmatch .matchorigin li {
@@ -29,8 +29,8 @@
 .ddmatch .matchtarget {
     border: 1px solid black;
     list-style: none;
-    min-height: 30px;
     margin: 6px;
+    min-height: 30px;
     padding: 4px;
     width: 100%;
 }
@@ -52,15 +52,15 @@
     width: 25%;
 }
 .ddmatch td.control {
-    width: 75%;
     margin: 6px;
     padding: 4px;
+    width: 75%;
 }
 
 .ddmatch table.answer {
     float: left;
-    width: 60%;
     margin-bottom: 0.5em;
+    width: 60%;
 }
 
 .ddmatch .correctanswertable {
@@ -86,12 +86,12 @@
 /* Editing form. */
 body#page-question-type-ddmatch div[id^=fitem_id_][id*=subquestions_] {
     background: #EEE;
+    border: 1px solid #BBB;
+    border-bottom: 0;
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
-    border-bottom: 0;
 }
 
 body#page-question-type-ddmatch div[id^=fitem_id_][id*=subquestions_] .fitemtitle {
@@ -100,10 +100,10 @@ body#page-question-type-ddmatch div[id^=fitem_id_][id*=subquestions_] .fitemtitl
 
 body#page-question-type-ddmatch div[id^=fitem_id_][id*=subanswers_] {
     background: #EEE;
+    border: 1px solid #BBB;
+    border-top: 0;
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
-    border-top: 0;
 }

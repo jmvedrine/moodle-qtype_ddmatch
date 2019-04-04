@@ -23,11 +23,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_ddmatch';
-$plugin->version   = 2016012300;
+$plugin->version   = 2019040400;
 
-$plugin->requires  = 2013050100;
+$plugin->requires  = 2015111600;
 $plugin->dependencies = array(
-    'qtype_match' => 2013050100,
+    'qtype_match' => 2015111600,
 );
-$plugin->release = '1.6 Drag and drop matching question for Moodle 2.6, 2.7, 2.8, 2.9, 3.0';
+$plugin->release = '1.7 Drag and drop matching question for Moodle 3.0 to 3.6';
 $plugin->maturity  = MATURITY_STABLE;
