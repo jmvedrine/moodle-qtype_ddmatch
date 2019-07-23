@@ -50,7 +50,7 @@ class qtype_ddmatch_renderer extends qtype_with_combined_feedback_renderer {
         $this->page->requires->string_for_js('draganswerhere', 'qtype_ddmatch');
         $this->page->requires->yui_module('moodle-qtype_ddmatch-dragdrop',
                 'M.qtype.ddmatch.init_dragdrop', array(array(
-                    'questionid' => $qa->get_slot(),
+                    'questionid' => $qa->get_outer_question_div_unique_id(),
                     'readonly' => $options->readonly,
                 ))
         );
